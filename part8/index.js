@@ -6,10 +6,8 @@ const Author = require("./models/author");
 const User = require("./models/user");
 const jwt = require("jsonwebtoken");
 
-console.log("connecting to", MONGODB_URI);
-
 mongoose
-  .connect(MONGODB_URI)
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("connected to MongoDB");
   })
@@ -66,7 +64,7 @@ const resolvers = {
     bookCount: () => books.length,
     authorCount: () => authors.length,
     allBooks: async (root, args) => {
-      return Book.find({});
+      return Book.find({}).populate("author");
     },
 
     allAuthors: async (root, args) => {
@@ -84,7 +82,12 @@ const resolvers = {
     },
   },
   Mutation: {
-    addBook: async (root, args) => {
+    addBook: async (root, args, context) => {
+      const currentUser = context.currentUser;
+      if (!currentUser) {
+        throw new AuthenticationError("not authenticated");
+      }
+
       let author = await Author.findOne({ name: args.author });
       if (!author) {
         author = new Author({ name: args.author, bookCount: 1 });
@@ -119,7 +122,12 @@ const resolvers = {
         });
       }
     },
-    editAuthor: async (root, args) => {
+    editAuthor: async (root, args, context) => {
+      const currentUser = context.currentUser;
+      if (!currentUser) {
+        throw new AuthenticationError("not authenticated");
+      }
+
       const author = await Author.findOne({ name: args.name });
       if (!author) {
         return null;
@@ -155,7 +163,7 @@ const resolvers = {
         id: user._id,
       };
 
-      return { value: jwt.sign(userForToken, JWT_SECRET) };
+      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
     },
   },
 };
