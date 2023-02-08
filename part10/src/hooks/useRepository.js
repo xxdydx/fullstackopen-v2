@@ -1,34 +1,23 @@
-import { useState, useEffect } from "react";
 import { gql, useQuery } from "@apollo/client";
 const ALL_REPOSITORIES = gql`
-  query Repositories {
-    repositories {
-      edges {
-        cursor
-        node {
-          description
-          ownerAvatarUrl
-          stargazersCount
-          reviewCount
-          ratingAverage
-          language
-          id
-          fullName
-          forksCount
-        }
-      }
+  query Repository($id: String!) {
+    repository(id: $id) {
+      id
+      fullName
+      url
     }
   }
 `;
 
-const useRepositories = () => {
-  const response = useQuery(ALL_REPOSITORIES);
+const useRepository = async ({ id }) => {
+  const [func] = useQuery(ALL_REPOSITORIES, { variables });
+  const response = await func({ variables: { id } });
   console.log(response);
 
   return {
-    repositories: response.data ? response.data.repositories : [],
+    repositories: response.data ? response.data.repository : [],
     loading: response.loading,
   };
 };
 
-export default useRepositories;
+export default useRepository;

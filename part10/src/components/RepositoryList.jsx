@@ -1,7 +1,8 @@
 import { FlatList, View, StyleSheet, Image } from 'react-native';
 import Text from './Text';
-import { TouchableHighlight } from 'react-native-web';
-import useRepositories from '../hooks/useRepository';
+import { TouchableHighlight, TouchableOpacity } from 'react-native-web';
+import useRepositories from '../hooks/useRepositories';
+import { Linking } from 'react-native';
 
 
 
@@ -76,8 +77,8 @@ const RepositoryList = () => {
       data={repositoryNodes}
       ItemSeparatorComponent={ItemSeparator}
       renderItem = {({item, index, separators}) => (
-        
-        <View key={item.id} style={styles.container}>
+       <TouchableOpacity onPress = {() => Linking.openURL(`/repositories/${item.id}`)}>
+                  <View key={item.id} style={styles.container} >
           <View style={styles.topContainer}>
           <Image
                 style={styles.avatar}
@@ -115,6 +116,9 @@ const RepositoryList = () => {
             
             
         </View>
+
+
+        </TouchableOpacity>
 
         
       )
