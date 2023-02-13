@@ -4,13 +4,8 @@ import { Button, View } from "react-native";
 import { Formik } from "formik";
 import { StyleSheet } from "react-native";
 import * as yup from "yup";
-import useSignIn from "../hooks/useSignIn";
 import { useNavigate } from "react-router-native";
-
-const initialValues = {
-  Username: "",
-  Password: "",
-};
+import useReview from "../hooks/useReview";
 
 const styles = StyleSheet.create({
   form: {
@@ -25,39 +20,47 @@ const styles = StyleSheet.create({
   },
 });
 
-const validationSchema = yup.object().shape({
-  Username: yup.string().required(),
-  Password: yup.string().required(),
-});
+const initialValues = {
+  ownername: "",
+  reponame: "",
+  rating: "",
+  review: "",
+};
 
-const LoginForm = ({ onSubmit }) => {
+const validationSchema = yup.object().shape({
+  ownername: yup.string().required(),
+  reponame: yup.string().required(),
+  rating: yup.number().integer().required().lessThan(101).moreThan(0),
+  review: yup.string().required(),
+});
+const Form = ({ onSubmit }) => {
   return (
     <View style={styles.form}>
       <View style={styles.inputs}>
         <FormikTextInput
-          name="Username"
-          placeholder="Username"
+          name="ownername"
+          placeholder="Repository Owner Name"
         ></FormikTextInput>
         <FormikTextInput
-          name="Password"
-          placeholder="Password"
-          secureTextEntry={true}
+          name="reponame"
+          placeholder="Repository Name"
         ></FormikTextInput>
+        <FormikTextInput name="rating" placeholder="Rating"></FormikTextInput>
+        <FormikTextInput name="review" placeholder="Review"></FormikTextInput>
       </View>
 
-      <Button style={styles.button} onPress={onSubmit} title="Sign In"></Button>
+      <Button onPress={onSubmit} title="Create a Review"></Button>
     </View>
   );
 };
 
-const SignIn = () => {
-  const [signin] = useSignIn();
+const ReviewForm = () => {
+  const [review1] = useReview();
   const navigate = useNavigate();
-
   const onSubmit = async (values) => {
-    const { Username, Password } = values;
+    const { ownername, reponame, rating, review } = values;
     try {
-      const { data } = await signin({ Username, Password });
+      await review1({ ownername, reponame, rating, review });
       navigate("/");
     } catch (error) {
       console.log(error);
@@ -69,9 +72,9 @@ const SignIn = () => {
       onSubmit={onSubmit}
       validationSchema={validationSchema}
     >
-      {({ handleSubmit }) => <LoginForm onSubmit={handleSubmit} />}
+      {({ handleSubmit }) => <Form onSubmit={handleSubmit} />}
     </Formik>
   );
 };
 
-export default SignIn;
+export default ReviewForm;

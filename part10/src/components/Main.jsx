@@ -1,40 +1,36 @@
-import Constants from 'expo-constants'
-import {Text, View, StyleSheet} from 'react-native'
-import AppBar from './AppBar';
-import { Route, Routes, Navigate } from 'react-router-native';
-import { useMatch, useParams } from 'react-router-native';
+import Constants from "expo-constants";
+import { Text, View, StyleSheet } from "react-native";
+import AppBar from "./AppBar";
+import { Route, Routes, Navigate } from "react-router-native";
+import { useMatch, useParams } from "react-router-native";
 
-import RepositoryList from './RepositoryList';
-import theme from '../theme';
-import SignIn from './SignIn';
-import RepositoryView from './RepositoryView';
-
+import RepositoryList from "./RepositoryList";
+import theme from "../theme";
+import SignIn from "./SignIn";
+import RepositoryView from "./RepositoryView";
+import ReviewForm from "./ReviewForm";
 
 const styles = StyleSheet.create({
-    container: {
-      backgroundColor: theme.colors.mainBackground,
-        flexGrow: 1,
-        flexShrink: 1,
-      },
-}
-
-)
-
+  container: {
+    backgroundColor: theme.colors.mainBackground,
+    flexGrow: 1,
+    flexShrink: 1,
+  },
+});
 
 const Main = () => {
-  
-  
-    return (
-      <View style={styles.container}>
+  return (
+    <View style={styles.container}>
       <AppBar />
       <Routes>
         <Route path="/" element={<RepositoryList />} exact />
         <Route path="/signin" element={<SignIn />} exact />
         <Route path="/repositories/:id" element={<RepositoryView />} exact />
+        <Route path="/create" element={<ReviewForm />} exact />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </View>
-    );
-  };
+  );
+};
 
-export default Main
+export default Main;
