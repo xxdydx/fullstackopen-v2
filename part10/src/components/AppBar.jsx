@@ -73,6 +73,16 @@ const AppBar = () => {
               Create a Review
             </Text>
           </Link>
+          <Link to="/signup">
+            <Text
+              style={styles.tab}
+              color="appBarText"
+              fontSize="subheading"
+              fontWeight="bold"
+            >
+              Sign Up
+            </Text>
+          </Link>
           {data && data.me ? (
             <Text
               style={styles.tab}

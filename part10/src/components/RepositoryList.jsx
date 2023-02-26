@@ -4,8 +4,15 @@ import { Button, TouchableHighlight, TouchableOpacity } from "react-native-web";
 import useRepositories from "../hooks/useRepositories";
 import { Linking } from "react-native";
 import { useNavigate } from "react-router-native";
+import { useState } from "react";
+import { Picker } from "@react-native-picker/picker";
 
 const styles = StyleSheet.create({
+  header: {
+    height: 20,
+    padding: 20,
+    backgroundColor: "#d1d1cf",
+  },
   topContainer: {
     display: "flex",
     flexDirection: "row",
@@ -51,11 +58,44 @@ const formatNumber = (num) => {
 const ItemSeparator = () => <View style={styles.separator} />;
 
 const RepositoryList = () => {
-  const { repositories, loading } = useRepositories();
+  const [orderBy, setOrderBy] = useState("CREATED_AT");
+  const [orderBy1, setOrderBy1] = useState("");
+  const [orderDir, setOrderDir] = useState("DESC");
+  const { repositories, loading } = useRepositories(orderBy, orderDir);
   const navigate = useNavigate();
   if (loading === true) {
     return <Text>Loading...</Text>;
   }
+  const Header = () => {
+    return (
+      <View style={styles.header}>
+        <Picker
+          selectedValue={orderBy1}
+          onValueChange={(itemValue, itemIndex) => {
+            if (itemValue === "latest") {
+              setOrderBy("CREATED_AT");
+              setOrderBy1(itemValue);
+              setOrderDir("DESC");
+            }
+            if (itemValue === "highest") {
+              setOrderBy("RATING_AVERAGE");
+              setOrderBy1(itemValue);
+              setOrderDir("DESC");
+            }
+            if (itemValue === "lowest") {
+              setOrderBy("RATING_AVERAGE");
+              setOrderBy1(itemValue);
+              setOrderDir("ASC");
+            }
+          }}
+        >
+          <Picker.Item label="Latest repositories" value="latest" />
+          <Picker.Item label="Highest rated repositories" value="highest" />
+          <Picker.Item label="Lowest rated repositories" value="lowest" />
+        </Picker>
+      </View>
+    );
+  };
 
   const repositoryNodes = repositories
     ? repositories.edges.map((edge) => edge.node)
@@ -65,6 +105,7 @@ const RepositoryList = () => {
     <FlatList
       data={repositoryNodes}
       ItemSeparatorComponent={ItemSeparator}
+      ListHeaderComponent={Header}
       renderItem={({ item, index, separators }) => (
         <TouchableOpacity onPress={() => navigate(`/repositories/${item.id}`)}>
           <View key={item.id} style={styles.container}>
