@@ -1,18 +1,27 @@
-import express from 'express';
-import patientsService from '../services/patientsService';
+import express from "express";
+import patientsService from "../services/patientsService";
 
 const router = express.Router();
 
-router.get('/', (_req, res) => {
+router.get("/", (_req, res) => {
   res.send(patientsService.getPublicData());
 });
 
-router.post('/', (req, res) => {
-  const {name, gender, dateOfBirth, ssn, occupation} = req.body
+router.get("/:id", (req, res) => {
+  res.send(patientsService.getPatient(req.params.id));
+});
+
+router.post("/", (req, res) => {
+  const { name, gender, dateOfBirth, ssn, occupation, entries } = req.body;
   const newEntry = patientsService.addPatient({
-    name, gender, dateOfBirth, ssn, occupation
-  })
-  res.send(newEntry)
+    name,
+    gender,
+    dateOfBirth,
+    ssn,
+    occupation,
+    entries,
+  });
+  res.send(newEntry);
 });
 
 export default router;

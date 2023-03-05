@@ -4,6 +4,10 @@ import patientsRouter from '../patientor-backend/routes/patientsRouter'
 
 const app = express()
 app.use(express.json())
+const cors = require('cors')
+
+app.use(cors())
+
 
 app.get('/ping', (_req, res) => {
     res.send('pong')
