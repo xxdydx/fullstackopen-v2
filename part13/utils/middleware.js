@@ -38,4 +38,13 @@ const tokenExtractor = (req, res, next) => {
   next();
 };
 
-module.exports = { unknownEndpoint, errorHandler, tokenExtractor };
+const authUser = (req, res, next) => {
+  if (!req.session.userId) {
+    res
+      .status(401)
+      .json({ error: "session missing, login with a proper account" });
+  }
+  next();
+};
+
+module.exports = { authUser, unknownEndpoint, errorHandler, tokenExtractor };

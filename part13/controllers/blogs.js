@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const { Blog, User } = require("../models");
 const { Op } = require("sequelize");
-const { tokenExtractor } = require("../utils/middleware");
+const { tokenExtractor, authUser } = require("../utils/middleware");
 
 router.get("/", async (req, res) => {
   const where = {};
@@ -46,7 +46,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", tokenExtractor, async (req, res) => {
+router.post("/", authUser, tokenExtractor, async (req, res) => {
   try {
     const user = await User.findByPk(req.decodedToken.id);
     const blog = await Blog.create({
@@ -56,11 +56,12 @@ router.post("/", tokenExtractor, async (req, res) => {
     });
     return res.json(blog);
   } catch (error) {
+    console.log(error);
     return res.status(400).json({ error });
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", authUser, async (req, res) => {
   const blog = await Blog.findByPk(req.params.id);
   if (blog) {
     blog.likes = req.body.likes;
@@ -75,7 +76,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", tokenExtractor, async (req, res) => {
+router.delete("/:id", authUser, tokenExtractor, async (req, res) => {
   const user = await User.findByPk(req.decodedToken.id);
   const blog = await Blog.findByPk(req.params.id);
 

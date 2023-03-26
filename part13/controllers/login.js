@@ -12,6 +12,9 @@ router.post("/", async (request, response) => {
       username: body.username,
     },
   });
+  if (user.disabled) {
+    return res.status(401).json({ error: "Account is disabled" });
+  }
 
   const passwordCorrect = body.password === "secret";
 
@@ -25,6 +28,9 @@ router.post("/", async (request, response) => {
     username: user.username,
     id: user.id,
   };
+  request.session.userid = user.id;
+
+  console.log(request.session);
 
   const token = jwt.sign(userForToken, SECRET);
 
